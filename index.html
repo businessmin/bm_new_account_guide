@@ -31,14 +31,15 @@ h1{font:800 21px/1.35 var(--sans);margin:4px 0 0;letter-spacing:-.02em;text-wrap
 .coach p{font:700 17px/1.55 var(--sans);margin:10px 0 0;letter-spacing:-.01em;text-wrap:pretty}
 .coach .note{font:400 13.5px/1.5 var(--sans);color:var(--sub);margin-top:7px}
 .coach.idle p{color:var(--sub);font-weight:500}
-.device{width:100%;max-width:376px;background:var(--bezel);border-radius:36px;padding:8px;box-shadow:0 18px 44px rgba(22,32,42,.2)}
-.screen{position:relative;width:100%;aspect-ratio:360/690;max-height:720px;border-radius:29px;overflow:hidden;background:#fff;isolation:isolate}
+.devBox{position:relative;width:376px;height:706px}
+.device{position:absolute;left:0;top:0;width:376px;height:706px;transform-origin:0 0;background:var(--bezel);border-radius:36px;padding:8px;box-shadow:0 18px 44px rgba(22,32,42,.2)}
+.screen{position:relative;width:360px;height:690px;border-radius:29px;overflow:hidden;background:#fff;isolation:isolate}
 .reset{justify-self:center;border:0;background:none;color:var(--sub);font:500 13px var(--sans);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px}
 .reset:focus-visible{outline:2px solid var(--mint);border-radius:6px}
 @media (min-width:760px){
   body{padding-block:36px 44px}
-  .wrap{grid-template-columns:376px minmax(0,1fr);grid-template-rows:auto 1fr;column-gap:44px;row-gap:18px;align-items:start;justify-items:stretch}
-  .device{grid-column:1;grid-row:1/3}
+  .wrap{grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto 1fr;column-gap:44px;row-gap:18px;align-items:start;justify-items:stretch}
+  .devBox{grid-column:1;grid-row:1/3}
   .coach,.reset{grid-column:2;max-width:400px}
   .coach{margin-top:40px}
   h1{font-size:28px}
@@ -229,14 +230,14 @@ svg{display:block;flex:none}
 .startBtn:active{transform:scale(.98)}
 .wrap.pre .coach,.wrap.pre .reset{display:none}
 .coach.empty .lab,.coach.empty .note{display:none}
-@media (min-width:760px){.wrap.pre{grid-template-columns:376px;justify-content:center}}
+@media (min-width:760px){.wrap.pre{grid-template-columns:auto;justify-content:center}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
 </head><body><div class="wrap pre" id="wrap">
   <div class="coach idle" id="coach" aria-live="polite"><span class="lab" id="cLab">안내</span><p id="cTxt">화면 속 안내를 따라 눌러보세요.</p><div class="note" id="cNote" hidden></div></div>
 
-  <div class="device"><div class="screen app" id="screen">
+  <div class="devBox" id="devBox"><div class="device" id="device"><div class="screen app" id="screen">
 
     <!-- 0. 시작 화면 -->
     <section class="cover" id="vCover">
@@ -319,7 +320,7 @@ svg{display:block;flex:none}
     </div>
 
     <div class="hint" id="hint" hidden></div>
-  </div></div>
+  </div></div></div>
 
   <button class="reset" id="resetBtn">처음부터 다시 보기</button>
 </div>
@@ -476,7 +477,13 @@ const START_MSG="안내 문구를 따라 각 버튼을 클릭해 보세요.";
 function coachEmpty(t){$("cLab").textContent="";$("cTxt").textContent=t||"";$("cNote").hidden=true;const c=$("coach");c.classList.remove("live","idle");c.classList.add("empty");}
 function coachIdle(t){$("cLab").textContent="안내";$("cTxt").textContent=t;$("cNote").hidden=true;const c=$("coach");c.classList.remove("live","empty");c.classList.add("idle");}
 
-function rel(el,ct){const c=ct.getBoundingClientRect(),r=el.getBoundingClientRect();return {x:r.left-c.left,y:r.top-c.top,w:r.width,h:r.height};}
+let SCALE=1;
+function fitDevice(){const vw=document.documentElement.clientWidth, wide=vw>=760;
+  let sc=wide?Math.min(330/376,(innerHeight-56)/706):Math.min(1,(vw-32)/376);
+  sc=Math.max(.5,Math.min(1,sc));SCALE=sc;
+  $("device").style.transform=`scale(${sc})`;$("devBox").style.width=376*sc+"px";$("devBox").style.height=706*sc+"px";}
+addEventListener("resize",fitDevice);
+function rel(el,ct){const c=ct.getBoundingClientRect(),r=el.getBoundingClientRect(),k=SCALE;return {x:(r.left-c.left)/k,y:(r.top-c.top)/k,w:r.width/k,h:r.height/k};}
 let spotEl=null,spotT=null;
 function spot(el,pad=0){clearSpot();const [,ct]=cur();const r=rel(el,ct);spotEl=document.createElement("div");spotEl.className="spot";
   Object.assign(spotEl.style,{left:r.x-pad+"px",top:r.y-pad+"px",width:r.w+pad*2+"px",height:r.h+pad*2+"px"});ct.appendChild(spotEl);
@@ -607,7 +614,7 @@ $("resetBtn").onclick=()=>{closeSheet();const b=$("vBenefit");b.classList.remove
 $("startBtn").onclick=()=>{$("vCover").classList.add("off");$("wrap").classList.remove("pre");S=fresh();coachEmpty(START_MSG);$("scList").scrollTop=0;S.readyAt=Date.now()+700;gT=setTimeout(guide,720);};
 
 /* 시작 */
-drawSummary();drawBenefit();
+fitDevice();drawSummary();drawBenefit();
 S=fresh();coachEmpty();drawList();
 </script>
 </body></html>
