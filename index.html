@@ -493,7 +493,7 @@ function fitDevice(){const vw=document.documentElement.clientWidth, wide=vw>=600
 addEventListener("resize",fitDevice);
 function rel(el,ct){const c=ct.getBoundingClientRect(),r=el.getBoundingClientRect(),k=SCALE;return {x:(r.left-c.left)/k,y:(r.top-c.top)/k,w:r.width/k,h:r.height/k};}
 let spotEl=null,spotT=null;
-function spot(el,pad=0){clearSpot();const [,ct]=cur();const r=rel(el,ct);spotEl=document.createElement("div");spotEl.className="spot";
+function spot(el,pad=0){clearSpot();if(guideOff)return;const [,ct]=cur();const r=rel(el,ct);spotEl=document.createElement("div");spotEl.className="spot";
   Object.assign(spotEl.style,{left:r.x-pad+"px",top:r.y-pad+"px",width:r.w+pad*2+"px",height:r.h+pad*2+"px"});ct.appendChild(spotEl);
   spotT=setTimeout(()=>spotEl&&spotEl.classList.add("soft"),2300);}
 function clearSpot(){clearTimeout(spotT);if(spotEl)spotEl.remove();spotEl=null;}
@@ -513,8 +513,10 @@ function target(){
   if(S.step==="toTab")return [$("tabB"),"<b>주문유형별</b> 탭을 눌러보세요"];
   return null;
 }
+let guideOff=false; // 주문유형별 탭을 한 번 누르면 이후 안내 팝업·스크롤 안내를 띄우지 않음
 function guide(){
   clearTimeout(gT);clearTip();
+  if(guideOff){setHint(null);return;}
   if(!$("vCover").classList.contains("off")){setHint(null);return;}
   if($("vBenefit").classList.contains("on")||$("shw").classList.contains("on"))return;
   const w=S.readyAt-Date.now();if(w>0){setHint(null);gT=setTimeout(guide,w+20);return;}
@@ -582,6 +584,7 @@ $("list").addEventListener("click",e=>{
 $("list").addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-x]")){e.preventDefault();e.target.click();}});
 $("tabB").onclick=()=>{
   if(S.mode==="b")return;
+  guideOff=true;
   S.mode="b";S.step="b";S.openB=[0,0,0,0,0];clearSpot();clearTip();setHint(null);drawList();
   coach("b");
 };
@@ -596,13 +599,13 @@ $("tabA").onclick=()=>{
 function openBenefit(){
   clearSpot();clearTip();
   const v=$("vBenefit");v.classList.add("on");v.setAttribute("aria-hidden","false");$("scBen").scrollTop=0;$("backBtn").classList.remove("on");
-  coach("benefit");setHint("↓ 아래로 스크롤해서 끝까지 확인해 보세요");
+  coach("benefit");if(!guideOff)setHint("↓ 아래로 스크롤해서 끝까지 확인해 보세요");
 }
 function closeBenefit(){
   const v=$("vBenefit");if(!v.classList.contains("on"))return;
   v.classList.remove("on");v.setAttribute("aria-hidden","true");setHint(null);
   S.f=S.f||{};S.f.ben=1;if(guided())S.step=nextStep();
-  S.readyAt=Date.now()+350;S.tipClosed=false;coachIdle("화면 속 안내를 따라 눌러보세요.");gT=setTimeout(guide,370);
+  S.readyAt=Date.now()+350;S.tipClosed=false;if(!guideOff)coachIdle("화면 속 안내를 따라 눌러보세요.");gT=setTimeout(guide,370);
 }
 $("scBen").addEventListener("scroll",e=>{const s=e.target;
   if(s.scrollTop+s.clientHeight>=s.scrollHeight-12){$("backBtn").classList.add("on");setHint(null);}},{passive:true});
@@ -618,7 +621,7 @@ kb($("card1"),openDetail);
 $("dX").onclick=closeDetail;$("benBtn").onclick=openBenefit;$("bX").onclick=closeBenefit;$("backBtn").onclick=closeBenefit;
 $("shBd").onclick=closeSheet;$("shX").onclick=closeSheet;
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){if($("shw").classList.contains("on"))closeSheet();else closeBenefit();}});
-$("resetBtn").onclick=()=>{closeSheet();const b=$("vBenefit");b.classList.remove("on");closeDetail();$("scList").scrollTop=0;clearTimeout(gT);setHint(null);$("vCover").classList.remove("off");$("wrap").classList.add("pre");};
+$("resetBtn").onclick=()=>{guideOff=false;closeSheet();const b=$("vBenefit");b.classList.remove("on");closeDetail();$("scList").scrollTop=0;clearTimeout(gT);setHint(null);$("vCover").classList.remove("off");$("wrap").classList.add("pre");};
 $("startBtn").onclick=()=>{$("vCover").classList.add("off");$("wrap").classList.remove("pre");S=fresh();coachEmpty(START_MSG);$("scList").scrollTop=0;S.readyAt=Date.now()+700;gT=setTimeout(guide,720);};
 
 /* 시작 */
