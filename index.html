@@ -134,6 +134,9 @@ svg{display:block;flex:none}
 .it{display:grid;grid-template-columns:1fr auto 14px;align-items:center;column-gap:6px;padding:16px 0;width:100%;border:0;background:none;text-align:left;font-size:14px;font-weight:500}
 .it+.it{border-top:1px solid var(--bd)}
 .it .l{flex:1;min-width:0}
+.it .tags{grid-column:1;display:flex;gap:4px;margin-top:6px}
+.it .tags i{font-style:normal;font-size:11px;font-weight:700;color:var(--pur);background:#ECE8FF;border-radius:4px;padding:2px 6px}
+.it>s.st{grid-column:2;justify-self:end;align-self:start;font-size:12px;color:var(--t3);font-weight:400;margin-top:5px}
 .it>small{grid-column:1/-1;font-size:12px;color:var(--t2);font-weight:400;margin-top:4px}
 .it>small.ad{color:var(--blue);font-weight:700;display:flex;align-items:center;gap:2px}
 .it.na{cursor:default}
@@ -260,7 +263,7 @@ svg{display:block;flex:none}
         <div class="dl"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>정산명세서</div>
         <div class="sitem tap" id="card1" role="button" tabindex="0" aria-label="11월 10일 음식배달 정산 상세 보기">
           <h3>11월 10일</h3>
-          <dl><dt>음식배달</dt><dd><span class="bdg b" style="margin-left:0">입금예정</span></dd><dt>정산기간</dt><dd>26. 11. 04. (수) ~ 26. 11. 07. (토)</dd><dt>입금금액</dt><dd><b>4,175,192원</b></dd></dl>
+          <dl><dt>음식배달</dt><dd><span class="bdg b" style="margin-left:0">입금예정</span></dd><dt>정산기간</dt><dd>26. 11. 4 (수) ~ 26. 11. 7 (화)</dd><dt>입금금액</dt><dd><b>4,175,192원</b></dd></dl>
           <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1D1F23" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
         </div>
         <div class="sitem">
@@ -286,7 +289,7 @@ svg{display:block;flex:none}
     <section class="view sub" id="vDetail" aria-hidden="true">
       <div class="bar"><button class="ib" id="dX" aria-label="닫기"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1D1F23" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button>정산내역 상세</div>
       <div class="sc" id="scDetail"><div class="ct" id="ctDetail">
-        <div class="ch"><b>음식배달</b><span>26. 11. 4 (수) ~ 26. 11. 7 (토)</span></div>
+        <div class="ch"><b>음식배달</b><span>26. 11. 4 (수) ~ 26. 11. 7 (화)</span></div>
         <div class="sum" id="sumCard">
           <div class="row" style="align-items:flex-start"><div><div class="lbl">입금 금액</div><div class="big" id="sDep"></div></div><div class="when"><span class="bdg b" style="margin:0">입금예정</span>11월 10일 (화)</div></div>
           <div class="box row"><span class="qi g">총 매출액 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9AA1AA" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 17h.01"/></svg></span><b class="amt" style="font-size:17px" id="sSales"></b></div>
@@ -296,7 +299,7 @@ svg{display:block;flex:none}
         <div class="band"></div>
         <div class="dh">
           <div class="row"><h2>상세내역</h2><span class="sw">모두 펼치기<i></i></span></div>
-          <button class="lnk tap" id="suchwiBtn">배민 수취 항목 확인</button>
+          <span class="lnk" style="cursor:default">정산 구조 알아보기</span>
         </div>
         <div class="tabs" role="tablist"><button id="tabA" class="on" role="tab">매출 • 비용별</button><button id="tabB" role="tab">주문유형별</button></div>
         <div class="list" id="list"></div>
@@ -334,50 +337,53 @@ const sum=a=>a.reduce((s,x)=>s+x,0);
 // 바텀시트
 const SH={
  jumun:{t:"주문매출",groups:[
-   {l:"바로결제 주문금액",rows:[["배민배달",3900000],["가게배달",1410027],["픽업",560000]]},
-   {l:"만나서결제 주문금액",rows:[["가게배달",289973],["픽업",40000]]}]},
+   {l:"바로결제 주문금액",rows:[["배민배달",3735000],["가게배달",1232027],["픽업",471500],["사전예약",467000]]},
+   {l:"만나서결제 주문금액",rows:[["가게배달",284973],["픽업",40000],["사전예약",20000]]}]},
  tip:{t:"가게배달팁 매출",rows:[["바로결제 가게배달팁",50000]]},
  etc:{t:"기타매출",rows:[["소액주문비",50000],["일회용컵 보증금액",3000]]},
- jungae:{t:"중개이용료",perk:5,rows:[["배민배달 중개이용료",-250200,-270000,"가게별 중개이용료 적용"],["가게배달 중개이용료",-100000,-112000,"신규 성장 패키지 중개이용료 적용"],["픽업 중개이용료",-36000]]},
+ refund:{t:"부분환불금액",rows:[["배민배달",-13000],["가게배달",-2000],["픽업",-1500],["배민오더",-2000],["사전예약",-32000]]},
+ jungae:{t:"중개이용료",perk:5,rows:[["배민배달 중개이용료",-230200,-250000,"가게별 중개이용료 적용"],["가게배달 중개이용료",-90000,-102000,"신규 성장 패키지 중개이용료 적용"],["픽업 중개이용료",-36000],["사전예약 중개이용료",-30000]]},
  gyeol:{t:"결제정산수수료",rows:[["기본수수료(정률)",-89000],["기본수수료(정액)",-59000],["우대수수료",15637],["우대수수료 환급",15000]]},
- bae:{t:"배민배달비",perk:5,rows:[["알뜰배달 배달비",-205900,-253200,"가게별 배달비 적용"],["한집배달 배달비",-266800]]},
+ bae:{t:"배민배달비",rows:[["알뜰배달 배달비",-230000,-255000,"프로모션 배달비 적용"],["알뜰배달 배달비 할인",10000],["한집배달 배달비",-262700,-265000,"상생요금제 적용"],["한집배달 배달비 할인",10000,0,"지역별 배달비 할인 적용"]]},
  hal:{t:"할인·마케팅",groups:[
    {l:"배민클럽 배달팁 할인",rows:[["배민클럽(한집배달) 배달팁 할인",-180000],["배민클럽(한집배달) 배달팁 지원",48000,1],["배민클럽(알뜰배달) 배달팁 할인",-87000],["배민클럽(알뜰배달) 배달팁 지원",45000,1]]},
    {l:"배달팁 즉시할인",rows:[["한집배달 배달팁 즉시할인",-210000],["한집배달 배달팁 즉시할인 지원",72000,1],["알뜰배달 배달팁 즉시할인",-140000],["알뜰배달 배달팁 즉시할인 지원",40000,1]]},
    {l:"주문금액 즉시할인",rows:[["주문금액 즉시할인",-91481],["주문금액 즉시할인 지원",3000,1]]},
    {l:"메뉴 할인",rows:[["메뉴할인",-180000],["메뉴할인 지원",25000,1]]}]},
  click:{t:"우리가게클릭",ad:1,groups:[{l:"이용요금",clicks:[["2026. 11. 4",-10000],["2026. 11. 4",-20000],["2026. 11. 5",-40400],["2026. 11. 5",-19600],["2026. 11. 6",-10000],["2026. 11. 7",-50000]]}],rows:[["첫 이용 지원",30000],["조정금액",-10000],["부가세",-15000]]},
- jeoe:{t:"정산 제외",rows:[["만나서 결제 금액",-329973],["부분환불 금액",-15000]]},
+ jeoe:{t:"정산 제외",rows:[["만나서 결제 금액",-344973]]},
  sonsil:{t:"손실 환급",c3:1,rows:[["CS 발생 조정","TC9999999",8000],["CS 발생 조정","TC9999999",4800]]},
  bojeong:{t:"보정금액",c3:1,rows:[["기타 사유 조정","-",20000]]}
 };
 function sheetTotal(s){let t=0;(s.groups||[]).forEach(g=>{t+=g.rows?sum(g.rows.map(r=>r[1])):sum(g.clicks.map(r=>r[1]));});(s.rows||[]).forEach(r=>t+=s.c3?r[2]:r[1]);return t;}
 const T=k=>sheetTotal(SH[k]);
+const strikeSum=k=>-sum(SH[k].rows.map(r=>r[2]?r[2]:(r[1]<0?r[1]:0)));
 
 const SUP=[["배민배달비 지원",52000],["배민클럽 지원",30000],["광고 프로모션",30000],["신규 온라인 입점 지원",14060]];
 const A=[
- {k:"매출",items:[{l:"주문매출",v:T("jumun"),sh:"jumun"},{l:"가게배달팁 매출",v:T("tip"),sh:"tip"},{l:"기타매출",v:T("etc"),sh:"etc"}]},
+ {k:"매출",items:[{l:"주문매출",v:T("jumun"),sh:"jumun"},{l:"가게배달팁 매출",v:T("tip"),sh:"tip"},{l:"기타매출",v:T("etc"),sh:"etc"},{l:"부분환불금액",v:T("refund"),sh:"refund"}]},
  {k:"기타 지원금",items:SUP.map(([l,v])=>({l,v}))},
- {k:"비용 및 차감",items:[{l:"중개이용료",d:"배민 주문에 대한 중개 서비스 이용료",v:T("jungae"),sh:"jungae"},{l:"결제정산수수료",d:"카드·휴대폰 등 결제수단 서비스 이용료",v:T("gyeol"),sh:"gyeol"},{l:"배민배달비",d:"배민배달 시 발생하는 배달 이용료",v:T("bae"),sh:"bae"},{l:"할인·마케팅",d:"파트너님이 설정한 할인 비용 부담분",v:T("hal"),sh:"hal"},{l:"우리가게클릭",ad:1,v:T("click"),sh:"click"}]},
+ {k:"비용 및 차감",items:[{l:"중개이용료",tags:["프로모션","상생요금제"],s:-strikeSum("jungae"),v:T("jungae"),sh:"jungae"},{l:"결제정산수수료",tags:["우대수수료"],v:T("gyeol"),sh:"gyeol"},{l:"배민배달비",tags:["프로모션","상생요금제"],s:-strikeSum("bae"),v:T("bae"),sh:"bae"},{l:"할인·마케팅",d:"파트너님이 설정한 할인 비용 부담분",v:T("hal"),sh:"hal"},{l:"우리가게클릭",ad:1,v:T("click"),sh:"click"}]},
  {k:"정산 제외 및 조정금액",items:[{l:"정산 제외",d:"만나서결제 ∙ 부분환불 등 제외분",v:T("jeoe"),sh:"jeoe"},{l:"광고 미수금",v:-20000},{l:"손실 환급",v:T("sonsil"),sh:"sonsil"},{l:"보정금액",v:T("bojeong"),sh:"bojeong"}]}
 ];
 A.forEach(s=>s.v=sum(s.items.map(i=>i.v)));
-const VAT_BY_TYPE=[-78451,-45000,-21500], VAT=sum(VAT_BY_TYPE);
+const VAT_BY_TYPE=[-70000,-40000,-19951,-15000], VAT=sum(VAT_BY_TYPE);
 const DEPOSIT=sum(A.map(s=>s.v))+VAT;
 
 // 주문유형별
 const g=(l,rows)=>({l,rows,v:sum(rows.map(r=>r[1]))});
 const B=[
- {k:"배민배달",groups:[g("(A)주문중개",[["주문금액",3900000,1],["부분환불금액",-10000],["소액주문비",30000],["중개이용료",-250200,1,"p"],["고객할인비용",-400000,1]]),g("(B)배달",[["배민배달비",-472700,1,"p"]]),g("(C)그 외",[["결제정산수수료",-62363]]),g("(D)부가세",[])],vat:VAT_BY_TYPE[0]},
- {k:"가게배달",groups:[g("(A)주문중개",[["주문금액",1700000,1],["가게배달팁",50000],["부분환불금액",-3000],["소액주문비",20000],["중개이용료",-100000,1],["고객할인비용",-170481,1]]),g("(B)그 외",[["결제정산수수료",-40000],["만나서 결제 금액",-289973]]),g("(C)부가세",[])],vat:VAT_BY_TYPE[1]},
- {k:"픽업",groups:[g("(A)주문중개",[["주문금액",600000,1],["부분환불금액",-2000],["일회용컵 보증금액",3000],["중개이용료",-36000,1],["고객할인비용",-85000,1]]),g("(B)그 외",[["결제정산수수료",-15000],["만나서 결제 금액",-40000]]),g("(C)부가세",[])],vat:VAT_BY_TYPE[2]},
- {k:"기타",q:1,flat:[["기타 지원금",A[1].v],["광고 미수금",-20000],["손실 환급",T("sonsil")],["보정금액",T("bojeong")]]},
- {k:"우리가게클릭",q:1,flat:[["이용요금",sum(SH.click.groups[0].clicks.map(r=>r[1])),1],...SH.click.rows]}
+ {k:"배민배달",groups:[g("(A)주문중개",[["주문금액",3735000,1],["부분환불금액",-13000],["소액주문비",30000],["중개이용료",-230200,1,"p"],["고객할인비용",-340000,1]]),g("(B)배달",[["고객배달팁 할인비용",-40000,1],["배민배달비",-472700,1,"p"]]),g("(C)그 외",[["결제정산수수료",-55000]]),g("(D)부가세",[])],vat:VAT_BY_TYPE[0]},
+ {k:"가게배달",groups:[g("(A)주문중개",[["주문금액",1517000,1],["가게배달팁",50000],["부분환불금액",-2000],["소액주문비",20000],["중개이용료",-90000,1],["고객할인비용",-150481,1]]),g("(B)그 외",[["결제정산수수료",-35000],["만나서 결제 금액",-284973]]),g("(C)부가세",[])],vat:VAT_BY_TYPE[1]},
+ {k:"픽업",groups:[g("(A)주문중개",[["주문금액",511500,1],["부분환불금액",-1500],["일회용컵 보증금액",3000],["중개이용료",-36000,1],["고객할인비용",-80000,1]]),g("(B)그 외",[["결제정산수수료",-15000],["만나서 결제 금액",-40000]]),g("(C)부가세",[])],vat:VAT_BY_TYPE[2]},
+ {k:"기타",q:1,flat:[["조정금액",-20000+T("sonsil")+T("bojeong")],["배민배달비 지원",SUP[0][1]+SUP[1][1],1],["광고비 지원",SUP[2][1]+SUP[3][1],1],["배민오더 부분환불금액",-2000]]},
+ {k:"우리가게클릭",q:1,flat:[["이용요금",sum(SH.click.groups[0].clicks.map(r=>r[1])),1],...SH.click.rows]},
+ {k:"사전예약",groups:[g("(A)주문중개",[["주문금액",487000,1],["부분환불금액",-32000],["중개이용료",-30000,1,"p"],["고객할인비용",-45000,1]]),g("(B)그 외",[["결제정산수수료",-12363],["만나서 결제 금액",-20000]]),g("(C)부가세",[])],vat:VAT_BY_TYPE[3]}
 ];
 B.forEach(s=>{if(s.groups){s.groups[s.groups.length-1].v=s.vat;s.v=sum(s.groups.map(x=>x.v));}else s.v=sum(s.flat.map(r=>r[1]));});
 
 // 배민 혜택
-const PERK_JUNGAE=[418000,-31800], PERK_BAE=[520000,-47300];
+const PERK_JUNGAE=[strikeSum("jungae"),-(strikeSum("jungae")+T("jungae"))], PERK_BAE=[strikeSum("bae"),-(strikeSum("bae")+T("bae"))];
 const halRows=SH.hal.groups.flatMap(x=>x.rows), HAL_SUP=sum(halRows.filter(r=>r[2]).map(r=>r[1])), HAL_GROSS=-sum(halRows.filter(r=>!r[2]).map(r=>r[1]));
 const DISC=-(PERK_JUNGAE[1]+PERK_BAE[1]), SUPPORT=A[1].v+HAL_SUP, BENEFIT=DISC+SUPPORT;
 
@@ -396,7 +402,7 @@ function drawSummary(){
    [[c[0].l,c[0].v],[c[1].l,c[1].v],[c[2].l,c[2].v],["할인·마케팅·광고",ad]].map(([l,v])=>`<div class="row" style="font-size:13.5px"><span>${l}</span><span class="amt">${won(v)}</span></div>`).join("");
 }
 function secHTML(i,s,open){
-  const items=s.items.map(it=>`<${it.sh?'button':'div'} class="it ${it.sh?'tap':'na'}" ${it.sh?`data-sh="${it.sh}"`:''}><span class="l">${it.l}</span><span class="amt">${won(it.v)}</span>${it.sh?IC.r:'<span class="sp"></span>'}${it.d?`<small>${it.d}</small>`:''}${it.ad?`<small class="ad">광고효과 ${IC.rb}</small>`:''}</${it.sh?'button':'div'}>`).join("");
+  const items=s.items.map(it=>`<${it.sh?'button':'div'} class="it ${it.sh?'tap':'na'}" ${it.sh?`data-sh="${it.sh}"`:''}><span class="l">${it.l}</span><span class="amt">${won(it.v)}</span>${it.sh?IC.r:'<span class="sp"></span>'}${it.tags?`<span class="tags">${it.tags.map(x=>`<i>${x}</i>`).join('')}</span>`:''}${it.s?`<s class="st">${won(it.s)}</s>`:''}${it.d?`<small>${it.d}</small>`:''}${it.ad?`<small class="ad">광고효과 ${IC.rb}</small>`:''}</${it.sh?'button':'div'}>`).join("");
   return `<div class="sec ${open?'open':''}" data-i="${i}"><button class="sh tap" data-t="${i}" aria-expanded="${open}"><span class="qi">${s.k} ${IC.q}</span><span class="v amt">${won(s.v)}</span>${IC.dn}</button><div class="inner">${items}</div></div>`;
 }
 function secBHTML(i,s,open){
@@ -422,18 +428,18 @@ function drawBenefit(){
   const card=(t,[pre,ben],net)=>`<div class="bcard"><div class="row"><span>${t}</span><span class="amt">${net.toLocaleString("ko-KR")}원</span></div><div class="bin row"><span>혜택 적용 전</span><span class="amt">${pre.toLocaleString("ko-KR")}원</span></div><div class="bin p row"><span>배민 혜택</span><span class="amt">${won(ben)}</span></div></div>`;
   const pct=Math.round(HAL_SUP/HAL_GROSS*1000)/10;
   $("ctBen").innerHTML=`
-  <div class="bh"><h2>이번 정산에서 받은 배민 혜택</h2><div class="tt">총 ${won(BENEFIT,false)}</div><div class="row"><span>정산기간 기준</span><span>26. 11. 4 (수) ~ 26. 11. 7 (토)</span></div></div>
+  <div class="bh"><h2>이번 정산에서 받은 배민 혜택</h2><div class="tt">총 ${won(BENEFIT,false)}</div><div class="row"><span>정산기간 기준</span><span>26. 11. 4 (수) ~ 26. 11. 7 (화)</span></div></div>
   <div class="band"></div>
   <div class="bsec"><div class="row"><b>할인 받은 금액</b><em>${won(DISC,false)}</em></div><small>배민 혜택으로 낼 금액이 줄었어요.</small>
-   ${card("중개이용료",PERK_JUNGAE,-A[2].items[0].v)}${card("배달비",PERK_BAE,-A[2].items[2].v)}</div>
+   ${card("중개이용료",PERK_JUNGAE,-A[2].items[0].v)}${card("배민배달비",PERK_BAE,-A[2].items[2].v)}</div>
   <div class="bsec" style="padding-top:28px"><div class="row"><b>지원 받은 금액</b><em>${won(SUPPORT,false)}</em></div>
-   <div class="bcard"><div class="row"><span>기타 지원금</span><span class="amt">${A[1].v.toLocaleString("ko-KR")}원</span></div><small>입금 금액에 더해진 금액이에요.</small>
-    <div class="bin p"><div class="row"><span>배달비 지원</span><span class="amt">${(SUP[0][1]+SUP[1][1]).toLocaleString("ko-KR")}원</span></div><div class="row"><span>프로모션 멤버십 지원</span><span class="amt">${(SUP[2][1]+SUP[3][1]).toLocaleString("ko-KR")}원</span></div></div></div>
    <div class="bcard"><div class="row"><span>고객할인 분담금</span><span class="amt">${HAL_SUP.toLocaleString("ko-KR")}원</span></div><small>배민이 부담한 고객할인 금액이에요.</small>
     <div class="bin p" style="padding-bottom:14px"><div class="row" style="border:0;padding:0;margin:0"><span>총 할인 금액</span><span class="amt">${HAL_GROSS.toLocaleString("ko-KR")}원</span></div>
      <div class="bar2"><i style="width:${pct}%"></i></div>
      <div class="row" style="border:0;padding:0;margin:0 0 8px"><span><i class="dot" style="background:#6B5CF6"></i>배민지원</span><span class="amt">${HAL_SUP.toLocaleString("ko-KR")}원</span></div>
-     <div class="row" style="border:0;padding:0;margin:0"><span><i class="dot" style="background:#C9CDD3"></i>파트너님 부담</span><span class="amt">${(HAL_GROSS-HAL_SUP).toLocaleString("ko-KR")}원</span></div></div></div>
+     <div class="row" style="border:0;padding:0;margin:0"><span><i class="dot" style="background:#C9CDD3"></i>파트너 부담</span><span class="amt">${(HAL_GROSS-HAL_SUP).toLocaleString("ko-KR")}원</span></div></div></div>
+   <div class="bcard"><div class="row"><span>기타 지원금</span><span class="amt">${A[1].v.toLocaleString("ko-KR")}원</span></div><small>입금 금액에 더해진 금액이에요.</small>
+    <div class="bin p"><div class="row"><span>배달비 지원</span><span class="amt">${(SUP[0][1]+SUP[1][1]).toLocaleString("ko-KR")}원</span></div><div class="row"><span>프로모션 멤버십 지원</span><span class="amt">${(SUP[2][1]+SUP[3][1]).toLocaleString("ko-KR")}원</span></div></div></div>
   </div><div style="height:90px"></div>`;
 }
 function sheetHTML(k){
@@ -545,7 +551,7 @@ function closeDetail(){
   S=fresh();S.readyAt=Date.now()+500;coachEmpty(START_MSG);setTimeout(guide,520);
 }
 function nextStep(){S.f=S.f||{};if(!S.f.ben)return "intro";const n=[0,1,2,3].find(k=>!S.seen.has(k));if(n!==undefined){S.next=n;return "sec";}
-  if(!S.f.vat)return "vat";if(!S.f.dep)return "deposit";if(!S.f.sq)return "suchwi";return "toTab";}
+  if(!S.f.vat)return "vat";if(!S.f.dep)return "deposit";return "toTab";}
 const guided=()=>S.mode==="a"&&view==="detail"&&S.step!=="b";
 function toggleA(i){
   const was=S.open[i];S.open[i]=was?0:1;clearSpot();clearTip();setHint(null);clearTimeout(gT);S.tipClosed=false;drawList();
@@ -609,7 +615,7 @@ function openSheet(k){clearTip();setHint(null);$("shTitle").textContent=SH[k].t;
 function closeSheet(){if(!$("shw").classList.contains("on"))return;$("shw").classList.remove("on");setTimeout(guide,350);}
 const kb=(el,fn)=>{el.onclick=fn;el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();fn();}};};
 kb($("card1"),openDetail);
-$("dX").onclick=closeDetail;$("suchwiBtn").onclick=openSuchwi;$("benBtn").onclick=openBenefit;$("bX").onclick=closeBenefit;$("backBtn").onclick=closeBenefit;
+$("dX").onclick=closeDetail;$("benBtn").onclick=openBenefit;$("bX").onclick=closeBenefit;$("backBtn").onclick=closeBenefit;
 $("shBd").onclick=closeSheet;$("shX").onclick=closeSheet;
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){if($("shw").classList.contains("on"))closeSheet();else closeBenefit();}});
 $("resetBtn").onclick=()=>{closeSheet();const b=$("vBenefit");b.classList.remove("on");closeDetail();$("scList").scrollTop=0;clearTimeout(gT);setHint(null);$("vCover").classList.remove("off");$("wrap").classList.add("pre");};
