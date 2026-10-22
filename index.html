@@ -28,7 +28,7 @@ h1{font:800 21px/1.35 var(--sans);margin:4px 0 0;letter-spacing:-.02em;text-wrap
 .coach{width:100%;max-width:400px;background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:18px 20px;min-height:132px;transition:border-color .3s,box-shadow .3s}
 .coach.live{border-color:var(--mint);box-shadow:0 0 0 3px var(--mint-soft)}
 .coach .lab{display:inline-block;font:700 13px var(--sans);color:#0B8C86;background:var(--mint-soft);padding:4px 11px;border-radius:999px}
-.coach p{font:700 17px/1.55 var(--sans);margin:10px 0 0;letter-spacing:-.01em;text-wrap:pretty}
+.coach p{font:700 17px/1.55 var(--sans);margin:10px 0 0;letter-spacing:-.01em;text-wrap:balance}
 .coach .note{font:400 13.5px/1.5 var(--sans);color:var(--sub);margin-top:7px}
 .coach.idle p{color:var(--sub);font-weight:500}
 .devBox{position:relative;width:376px;height:706px}
@@ -482,11 +482,14 @@ let S, view="list";
 const fresh=()=>({mode:"a",step:"list",open:[0,0,0,0],openB:[0,0,0,0,0],next:0,seen:new Set(),readyAt:Date.now()+1200,tipClosed:false});
 const cur=()=>({list:[$("scList"),$("ctList")],detail:[$("scDetail"),$("ctDetail")]})[view];
 
-function coach(k,note){const [l,t]=D[k];$("cLab").textContent=l;$("cTxt").textContent=t;$("cNote").hidden=!note;$("cNote").textContent=note||"";
+// 서술어 덩어리("보실 수 있어요", "클릭해 보세요")가 줄 끝에서 쪼개지지 않게 붙임
+const NB_WORDS=["기타 지원금","받지 않는","입금 금액","총 매출액","배민 혜택","정산 항목","고객할인 분담금","주문 유형","부가세 액수","최종 금액","정산 대상이","세부 내역","각 항목","각 버튼"];
+const nb=t=>NB_WORDS.reduce((a,w)=>a.split(w).join(w.replace(/ /g,"\u00a0")),t||"").replace(/ (수) (있어요|있습니다)/g,"\u00a0$1\u00a0$2").replace(/ (보세요|봐요|입니다)/g,"\u00a0$1");
+function coach(k,note){const [l,t]=D[k];$("cLab").textContent=l;$("cTxt").textContent=nb(t);$("cNote").hidden=!note;$("cNote").textContent=nb(note);
   const c=$("coach");c.classList.remove("idle","live","empty");void c.offsetWidth;c.classList.add("live");}
 const START_MSG="안내 문구를 따라 각 버튼을 클릭해 보세요.";
-function coachEmpty(t){$("cLab").textContent="";$("cTxt").textContent=t||"";$("cNote").hidden=true;const c=$("coach");c.classList.remove("live","idle");c.classList.add("empty");}
-function coachIdle(t){$("cLab").textContent="안내";$("cTxt").textContent=t;$("cNote").hidden=true;const c=$("coach");c.classList.remove("live","empty");c.classList.add("idle");}
+function coachEmpty(t){$("cLab").textContent="";$("cTxt").textContent=nb(t);$("cNote").hidden=true;const c=$("coach");c.classList.remove("live","idle");c.classList.add("empty");}
+function coachIdle(t){$("cLab").textContent="안내";$("cTxt").textContent=nb(t);$("cNote").hidden=true;const c=$("coach");c.classList.remove("live","empty");c.classList.add("idle");}
 
 let SCALE=1;
 function fitDevice(){const vw=document.documentElement.clientWidth, wide=vw>=600;
