@@ -36,20 +36,24 @@ h1{font:800 21px/1.35 var(--sans);margin:4px 0 0;letter-spacing:-.02em;text-wrap
 .screen{position:relative;width:360px;height:690px;border-radius:29px;overflow:hidden;background:#fff;isolation:isolate}
 .reset{justify-self:center;border:0;background:none;color:var(--sub);font:500 13px var(--sans);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px}
 .reset:focus-visible{outline:2px solid var(--mint);border-radius:6px}
+.foot{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;max-width:400px}
+.fnote{margin:0;font:500 12.5px/1.5 var(--sans);color:var(--sub);text-align:center}
 @media (min-width:600px){
   body{padding-block:20px 20px}
   .wrap{grid-template-columns:auto minmax(0,1fr);grid-template-rows:1fr auto 1fr;column-gap:clamp(20px,4vw,44px);row-gap:14px;align-items:start;justify-items:stretch}
   .devBox{grid-column:1;grid-row:1/4}
-  .coach,.reset{grid-column:2;max-width:400px}
+  .coach,.foot{grid-column:2;max-width:400px}
   .coach{grid-row:2;align-self:center}
-  .reset{grid-row:3}
+  .foot{grid-row:3;align-items:flex-start}
+  .fnote{text-align:left}
   h1{font-size:28px}
   .lead{display:block;color:var(--sub);font-size:15px;line-height:1.6;margin:8px 0 0}
   .coach{padding:clamp(18px,2.6vw,28px);min-height:200px;border-radius:20px}
   .coach .lab{font-size:14px;padding:5px 12px}
   .coach p{font-size:clamp(17px,2.2vw,22px);margin-top:14px}
   .coach .note{font-size:14.5px;margin-top:12px}
-  .reset{justify-self:start;align-self:start}
+  .reset{padding-left:0}
+  .foot{align-self:start}
 }
 
 /* ====== 앱 화면 ====== */
@@ -232,7 +236,7 @@ svg{display:block;flex:none}
 .startBtn{margin-top:30px;height:54px;border:0;border-radius:14px;background:var(--ink);color:#fff;font:700 17px var(--sans);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
 .startBtn:focus-visible{outline:3px solid var(--mint);outline-offset:2px}
 .startBtn:active{transform:scale(.98)}
-.wrap.pre .coach,.wrap.pre .reset{display:none}
+.wrap.pre .coach,.wrap.pre .foot{display:none}
 .coach.empty .lab,.coach.empty .note{display:none}
 @media (min-width:600px){.wrap.pre{grid-template-columns:auto;justify-content:center}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -326,7 +330,7 @@ svg{display:block;flex:none}
     <div class="hint" id="hint" hidden></div>
   </div></div></div>
 
-  <button class="reset" id="resetBtn">처음부터 다시 보기</button>
+  <div class="foot"><button class="reset" id="resetBtn">처음부터 다시 보기</button></div>
 </div>
 
 <script>
@@ -465,8 +469,8 @@ const D={
  summary:["정산 요약","입금 금액과 총 매출액, 주요 비용 및 차감금액, 배민 혜택 내역 등 주요한 정산 항목을 빠르게 확인하실 수 있어요."],
  benefit:["배민 혜택 내역","각 항목별로 제공해드린 배민 혜택과 지원금, 고객할인 분담금을 보실 수 있어요."],
  s0:["매출","모든 주문 유형의 합산 매출을 항목별로 보실 수 있어요."],
- s1:["기타 지원금","배민이 파트너님께 지원한 모든 금액을 보실 수 있어요."],
- s2:["비용 및 차감","주문 발생에 따라 파트너님이 부담한 비용을 보실 수 있어요."],
+ s1:["기타 지원금","파트너님이 배민에게 지원받은 모든 금액을 보실 수 있어요."],
+ s2:["비용 및 차감","주문에 따라 발생한 비용을 보실 수 있어요."],
  s3:["정산 제외 및 조정금액","매출에 포함되지만 정산 대상이 아닌 금액, 정산 과정에서 조정된 금액을 보실 수 있어요."],
  vat:["부가세","배민에서 거래된 금액으로 발생한 부가세 액수를 보실 수 있어요."],
  dep:["입금 금액","파트너님께 입금되는 최종 금액입니다."],
