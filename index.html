@@ -425,7 +425,7 @@ function drawList(){
     L.innerHTML=B.map((s,i)=>secBHTML(i,s,S.openB[i])).join("")+
      `<div class="sec dep"><div class="sh"><span>입금 금액</span><span class="v amt" style="margin-right:2px">${won(DEPOSIT,false)}</span></div></div>`;
   }
-  $("foot").hidden=S.mode!=="b";
+  $("foot").hidden=true;
   $("tabA").classList.toggle("on",S.mode==="a");$("tabB").classList.toggle("on",S.mode==="b");
 }
 function drawBenefit(){
