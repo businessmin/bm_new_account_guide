@@ -109,8 +109,10 @@ svg{display:block;flex:none}
 .ben em{font-style:normal;color:var(--pur)}
 .dh{padding:20px 16px 0}
 .dh h2{margin:0;font-size:18px}
-.sw{display:flex;align-items:center;gap:8px;font-size:13px}
-.sw i{width:34px;height:20px;border-radius:10px;background:#D5D9DE;position:relative}.sw i::after{content:"";position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+.sw{display:flex;align-items:center;gap:8px;font-size:13px;border:0;background:none;padding:4px 0;cursor:pointer;color:inherit}
+.sw i{width:34px;height:20px;border-radius:10px;background:#D5D9DE;position:relative;transition:background .25s}.sw i::after{content:"";position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:left .25s}
+.sw.on i{background:var(--blue)}.sw.on i::after{left:16px}
+.sw:focus-visible{outline:2px solid var(--mint);border-radius:6px}
 .lnk{font-size:13px;color:var(--t2);text-decoration:underline;text-underline-offset:3px;margin-top:4px;display:inline-block;border:0;background:none;padding:2px 0;cursor:pointer}
 .sq{border:1px solid var(--bd);border-radius:12px;padding:18px 16px 16px;margin-top:4px}
 .sq+.sq{margin-top:10px}
@@ -302,7 +304,7 @@ svg{display:block;flex:none}
         </div>
         <div class="band"></div>
         <div class="dh">
-          <div class="row"><h2>상세내역</h2><span class="sw">모두 펼치기<i></i></span></div>
+          <div class="row"><h2>상세내역</h2><button class="sw tap" id="swAll" role="switch" aria-checked="false">모두 펼치기<i></i></button></div>
           <span class="lnk" style="cursor:default">정산 구조 알아보기</span>
         </div>
         <div class="tabs" role="tablist"><button id="tabA" class="on" role="tab">매출 • 비용별</button><button id="tabB" role="tab">주문유형별</button></div>
@@ -427,6 +429,7 @@ function drawList(){
   }
   $("foot").hidden=true;
   $("tabA").classList.toggle("on",S.mode==="a");$("tabB").classList.toggle("on",S.mode==="b");
+  {const allOpen=(S.mode==="a"?S.open:S.openB).every(Boolean);$("swAll").classList.toggle("on",allOpen);$("swAll").setAttribute("aria-checked",allOpen);}
 }
 function drawBenefit(){
   const card=(t,[pre,ben],net)=>`<div class="bcard"><div class="row"><span>${t}</span><span class="amt">${net.toLocaleString("ko-KR")}원</span></div><div class="bin row"><span>혜택 적용 전</span><span class="amt">${pre.toLocaleString("ko-KR")}원</span></div><div class="bin p row"><span>배민 혜택</span><span class="amt">${won(ben)}</span></div></div>`;
@@ -479,7 +482,7 @@ const D={
 };
 const SHEET_NOTE="각 항목을 누르면 세부 내역을 볼 수 있어요.";
 let S, view="list";
-const fresh=()=>({mode:"a",step:"list",open:[0,0,0,0],openB:[0,0,0,0,0],next:0,seen:new Set(),readyAt:Date.now()+1200,tipClosed:false});
+const fresh=()=>({mode:"a",step:"list",open:[0,0,0,0],openB:B.map(()=>0),next:0,seen:new Set(),readyAt:Date.now()+1200,tipClosed:false});
 const cur=()=>({list:[$("scList"),$("ctList")],detail:[$("scDetail"),$("ctDetail")]})[view];
 
 // 서술어 덩어리("보실 수 있어요", "클릭해 보세요")가 줄 끝에서 쪼개지지 않게 붙임
@@ -589,10 +592,16 @@ $("list").addEventListener("click",e=>{
   S.mode==="a"?toggleA(i):toggleB(i);
 });
 $("list").addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-x]")){e.preventDefault();e.target.click();}});
+$("swAll").onclick=()=>{
+  const o=S.mode==="a"?S.open:S.openB, v=o.every(Boolean)?0:1;
+  o.fill(v);clearSpot();clearTip();setHint(null);clearTimeout(gT);drawList();
+  if(v&&S.mode==="a"){[0,1,2,3].forEach(k=>S.seen.add(k));if(guided()&&S.step==="sec")S.step=nextStep();}
+  S.readyAt=Date.now()+300;gT=setTimeout(guide,320);
+};
 $("tabB").onclick=()=>{
   if(S.mode==="b")return;
   guideOff=true;
-  S.mode="b";S.step="b";S.openB=[0,0,0,0,0];clearSpot();clearTip();setHint(null);drawList();
+  S.mode="b";S.step="b";S.openB=B.map(()=>0);clearSpot();clearTip();setHint(null);drawList();
   coach("b");
 };
 $("tabA").onclick=()=>{
