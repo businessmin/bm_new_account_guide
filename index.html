@@ -238,6 +238,11 @@ svg{display:block;flex:none}
 .startBtn{margin-top:30px;height:54px;border:0;border-radius:14px;background:var(--ink);color:#fff;font:700 17px var(--sans);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
 .startBtn:focus-visible{outline:3px solid var(--mint);outline-offset:2px}
 .startBtn:active{transform:scale(.98)}
+.startBtn{animation:btnRing 1.6s ease-out infinite}
+.startBtn.nudge{animation:shake .65s ease-in-out,btnRing 1.6s ease-out infinite}
+.startBtn svg{animation:arrowNudge 1.4s ease-in-out infinite}
+@keyframes arrowNudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+@keyframes btnRing{0%{box-shadow:0 0 0 0 rgba(18,181,174,.6)}100%{box-shadow:0 0 0 14px rgba(18,181,174,0)}}
 .wrap.pre .coach,.wrap.pre .foot{display:none}
 .coach.empty .lab,.coach.empty .note{display:none}
 @media (min-width:600px){.wrap.pre{grid-template-columns:auto;justify-content:center}}
@@ -637,11 +642,15 @@ kb($("card1"),openDetail);
 $("dX").onclick=closeDetail;$("benBtn").onclick=openBenefit;$("bX").onclick=closeBenefit;$("backBtn").onclick=closeBenefit;
 $("shBd").onclick=closeSheet;$("shX").onclick=closeSheet;
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){if($("shw").classList.contains("on"))closeSheet();else closeBenefit();}});
-$("resetBtn").onclick=()=>{guideOff=false;closeSheet();const b=$("vBenefit");b.classList.remove("on");closeDetail();$("scList").scrollTop=0;clearTimeout(gT);setHint(null);$("vCover").classList.remove("off");$("wrap").classList.add("pre");};
-$("startBtn").onclick=()=>{$("vCover").classList.add("off");$("wrap").classList.remove("pre");S=fresh();coachEmpty(START_MSG);$("scList").scrollTop=0;S.readyAt=Date.now()+700;gT=setTimeout(guide,720);};
+$("resetBtn").onclick=()=>{guideOff=false;closeSheet();const b=$("vBenefit");b.classList.remove("on");closeDetail();$("scList").scrollTop=0;clearTimeout(gT);setHint(null);$("vCover").classList.remove("off");$("wrap").classList.add("pre");coverNudge(true);};
+// 시작 버튼: 누르지 않으면 2.5초 뒤부터 3초마다 흔들기
+let cvT=null;
+function coverNudge(on){clearTimeout(cvT);const btn=$("startBtn");btn.classList.remove("nudge");if(!on)return;
+  const go=()=>{btn.classList.remove("nudge");void btn.offsetWidth;btn.classList.add("nudge");cvT=setTimeout(go,3000);};cvT=setTimeout(go,2500);}
+$("startBtn").onclick=()=>{coverNudge(false);$("vCover").classList.add("off");$("wrap").classList.remove("pre");S=fresh();coachEmpty(START_MSG);$("scList").scrollTop=0;S.readyAt=Date.now()+700;gT=setTimeout(guide,720);};
 
 /* 시작 */
 fitDevice();drawSummary();drawBenefit();
-S=fresh();coachEmpty();drawList();
+S=fresh();coachEmpty();drawList();coverNudge(true);
 </script>
 </body></html>
